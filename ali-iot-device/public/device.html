@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        .wrap {
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            padding: 10% 10%;
+            display: flex;
+            flex-direction: column;
+        }
+        .row {
+            flex: 1;
+            display: flex;
+        }
+        .row > button{
+            flex: 1;
+        }
+        .row > input{
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="row">
+            <p>设备1</p>
+            <button onClick="a('device1')">开启</button>
+            <button onClick="b('device1')">关闭</button>
+            <input type="text" id="device1"/>
+            <button onClick="send('device1')">发送</button>
+        </div>
+        <div class="row">
+            <p>设备2</p>
+            <button onClick="a('device2')">开启</button>
+            <button onClick="b('device2')">关闭</button>
+            <input type="text" id="device2"/>
+            <button onClick="send('device2')">发送</button>
+        </div>
+        <div class="row">
+            <p>设备3</p>
+            <button onClick="a('device3')">开启</button>
+            <button onClick="b('device3')">关闭</button>
+            <input type="text" id="device3"/>
+            <button onClick="send('device3')">发送</button>
+        </div>
+        <div class="row">
+            <p>设备4</p>
+            <button onClick="a('device4')">开启</button>
+            <button onClick="b('device4')">关闭</button>
+            <input type="text" id="device4"/>
+            <button onClick="send('device4')">发送</button>
+        </div>
+    </div>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        console.log(axios)
+        function a(n) {
+            axios.get(`http://47.100.116.130:4000/device/open/${n}`).then((res) => {
+                console.log(res.data)
+            })
+            console.log(n)
+        }
+        function b(n) {
+            axios.get(`http://47.100.116.130:4000/device/close/${n}`).then((res) => {
+                console.log(res.data)
+            })
+            console.log(n)
+        }
+        function send(n) {
+            let selector = '#' + n;
+            let value = document.querySelector(selector).value;
+            axios.get(`http://47.100.116.130:4000/device/send/${n}/${value}`).then((res) => {
+                console.log(res.data)
+            })
+            console.log(n)
+        }
+    </script>
+</body>
+</html>

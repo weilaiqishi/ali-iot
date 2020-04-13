@@ -1,0 +1,14 @@
+{
+    "device1": {
+        "productKey": "",
+        "deviceName": "",
+        "deviceSecret": "",
+        "regionId": "cn-shanghai"
+    },
+    "device2": {
+        "productKey": "",
+        "deviceName": "",
+        "deviceSecret": "",
+        "regionId": "cn-shanghai"
+    }
+}
