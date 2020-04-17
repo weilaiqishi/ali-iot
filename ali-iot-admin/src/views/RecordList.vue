@@ -3,6 +3,8 @@
     <h1>记录列表</h1>
     <el-table :data="items" style="flex: 1;overflow: scroll;">
       <el-table-column prop="deviceId.name" label="设备名称"></el-table-column>
+      <el-table-column prop="alarmValue" label="报警值"></el-table-column>
+      <el-table-column prop="alarm" label="报警" :formatter="formatter"></el-table-column>
       <el-table-column prop="temperature" label="温度"></el-table-column>
       <el-table-column prop="time" label="时间"></el-table-column>
       <el-table-column label="操作" width="180">
@@ -45,6 +47,9 @@ export default {
         });
         this.fetch();
       });
+    },
+    formatter(item) {
+      return item.alarm ? '是' : '否';
     }
   },
   created() {

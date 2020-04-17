@@ -1,5 +1,6 @@
 <template>
-  <div :id="id" style="width: 310px;height: 250px;">
+  <div style="position: relative;">
+    <div :id="id" style="width: 310px;height: 250px;"></div>
     <p class="x" @click="$store.commit('shouldShowDelete', id)"></p>
   </div>
 </template>
@@ -72,7 +73,7 @@ export default {
             },
             axisLabel: {
               color: "black",
-              interval:0,
+              interval: 0,
             },
             splitLine: {
               show: false,
@@ -178,7 +179,7 @@ export default {
     id: String,
   },
   watch: {
-    '$store.state.record': {
+    "$store.state.record": {
       handler(newVal) {
         if (!newVal[this.id]) return;
         let twoArr = newVal[this.id].items.reduce(
@@ -192,14 +193,13 @@ export default {
             time: [],
           }
         );
-        console.log(twoArr)
         this.option.xAxis[0].data = twoArr.time;
         this.option.series[0].data = twoArr.temperature;
         this.myChart.setOption(this.option);
       },
       immediate: true,
-      deep: true
-    }
+      deep: true,
+    },
   },
   mounted() {
     this.myChart = echarts.init(document.getElementById(this.id));
@@ -210,29 +210,29 @@ export default {
 
 <style scoped>
 .x {
-  position: relative;
+  position: absolute;
   left: 10px;
-  width: 10px;
-  height: 10px;
+  width: 15px;
+  height: 15px;
   display: inline-block;
   cursor: pointer;
 }
 .x::before {
   content: "";
   width: inherit;
-  border-top: 2px solid #000;
+  border-top: 3px solid #000;
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: -200px;
   transform: translate(-50%, -50%) rotate(45deg);
 }
 .x::after {
   content: "";
   width: inherit;
-  border-top: 2px solid #000;
+  border-top: 3px solid #000;
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: -200px;
   transform: translate(-50%, -50%) rotate(-45deg);
 }
 </style>

@@ -1,4 +1,6 @@
 {
     "AccessKeyID": "",
-    "AccessKeySecret": ""
+    "AccessKeySecret": "",
+    "SignName": "",
+    "TemplateCode": ""
 }

@@ -35,13 +35,24 @@
     <el-container style="positon:relative;">
       <el-header style="text-align: right; font-size: 20px;">
         <i
-          class="el-icon-setting"
+          :class="{ alarm: alarm }"
+          class="el-icon-bell"
+          style="margin-right: 315px;"
+          @click="dialogVisible = !dialogVisible"
+        ></i>
+        <i
+          class="el-icon-star-on"
           style="margin-right: 15px;"
           @click="VSHOW = !VSHOW"
         ></i>
+        <audio
+          id="music"
+          src="http://mp32.9ku.com/yinxiao/2019/06-20/ghao2mbrvwh.mp3"
+          style="visibility:hidden;"
+        ></audio>
       </el-header>
 
-      <el-main>
+      <el-main :class="[{ PRight: VSHOW }, { PBottom: dialogVisible }]">
         <router-view :key="$route.path"></router-view>
       </el-main>
 
@@ -50,18 +61,33 @@
           <echartsList></echartsList>
         </el-aside>
       </transition>
+      <transition name="slide-fade">
+        <el-footer
+          v-show="dialogVisible"
+          style="position:absolute;bottom: 0;height: 170px;background: #b3c0d1;left: 200px;right: 330px;z-index: 1000;"
+        >
+          <alarmList></alarmList>
+        </el-footer>
+      </transition>
     </el-container>
   </el-container>
 </template>
 
 <style>
+.PRight {
+  margin-right: 330px;
+}
+.PBottom {
+  margin-bottom: 170px;
+}
 .el-header {
   background-color: #b3c0d1;
   color: #333;
   line-height: 60px;
 }
-.el-main {
-  padding-right: 330px;
+.alarm {
+  font-size: 30px;
+  color: rgb(223, 46, 46);
 }
 .echartsList {
   position: absolute;
@@ -87,6 +113,19 @@
 
 <script>
 import echartsList from "./echartsList";
+import alarmList from "./alarmList";
+var throttle = function(func, delay) {
+  var prev = Date.now();
+  return function() {
+    var context = this;
+    var args = arguments;
+    var now = Date.now();
+    if (now - prev >= delay) {
+      func.apply(context, args);
+      prev = Date.now();
+    }
+  };
+};
 export default {
   data() {
     return {
@@ -94,29 +133,38 @@ export default {
       /*elAsideItemWidth: '100px',*/
       screenWidth: document.body.clientWidth,
       VSHOW: false,
+      dialogVisible: false,
+      alarm: false,
+      audio: null,
     };
   },
   methods: {
-    asideWidthFlex() {
-      if (document.body.clientWidth >= 1600) {
-        this.elAsideWidth = "250px";
-      } else if (document.body.clientWidth >= 800) {
-        this.elAsideWidth = "200px";
-      } else {
-        this.elAsideWidth = "150px";
-      }
+    handleClose(done) {
+      done();
     },
+    playMusic: throttle(function() {
+      this.audio = this.audio || document.getElementById("music");
+      if (this.audio !== null) {
+        this.audio.play();
+      }
+    }, 10000),
   },
-  created() {
-    this.asideWidthFlex();
-  },
-  mounted() {
-    window.onresize = () => {
-      this.asideWidthFlex();
-    };
+  watch: {
+    "$store.state.alarm": {
+      handler(newVal) {
+        let flag = this.alarm;
+        this.alarm = !!Object.keys(newVal).length;
+        if (this.alarm && !flag) {
+          this.playMusic();
+        }
+      },
+      immediate: true,
+      deep: true,
+    },
   },
   components: {
     echartsList,
+    alarmList,
   },
 };
 </script>

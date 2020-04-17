@@ -5,6 +5,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
     state: {
         record: {},
+        alarm: {},
         shouldShow: {}
     },
     mutations: {
@@ -17,6 +18,12 @@ const store = new Vuex.Store({
                 temperature: record.temperature,
                 time: record.time
             }))
+            if (record.alarm) {
+                state.alarm[record._id] = Vue.set(state.alarm, record._id, record)
+            }
+        },
+        alarmDelete(state, alarm) {
+            Vue.delete(state.alarm, alarm)
         },
         shouldShowAdd(state, deviceName) {
             Vue.set(state.shouldShow, deviceName, true)
