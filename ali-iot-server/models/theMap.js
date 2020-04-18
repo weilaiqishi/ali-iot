@@ -6,14 +6,10 @@ const schema = new mongoose.Schema({
         unique:true
     },
     description: { type: String },
+    image: { type: String },
     sizeX: { type: Number },
     sizeY: { type: Number },
-    point: [{
-        coordinateX: { type: Number },
-        coordinateY: { type: Number },
-        name: { type: String },
-        color: { type: String },
-    }]
+    point: { type: String }
 })
 
 schema.virtual('deviceList',{

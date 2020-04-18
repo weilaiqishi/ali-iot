@@ -69,34 +69,33 @@ container.on('message', function (context) {
     // var ack = context.delivery.accept();
     
     var content = JSON.parse(Buffer.from(msg.body.content).toString());
-    app.get('Device').findOne({'name': content.deviceName}, '_id alarmValue phone name theMapId', async function(err, device){
+    app.get('Device').findOne({'name': content.deviceName}, '_id alarmValue phone', async function(err, device){
         if (err) return handleError(err);
         let alarm = false;
         if (content.items.CurrentTemperature.value >= device.alarmValue) {
             alarm = true;
-            // const theMap = await app.get('TheMap').findById(device.theMapId)
             
-            // device.phone.forEach((item) => {
-            //     let param = {
-            //         temperature: content.items.CurrentTemperature.value.toString().substr(0,6),
-            //     };
-            //     console.log(param)
-            //     console.log(JSON.stringify(param))
-            //     smsClient.sendSMS({
-            //         PhoneNumbers: item.phone, //必填:待发送手机号,支持以逗号分隔的形式进行批量调用，目前从前端获取手机号码
-            //         SignName: aliConfig.SignName,//必填:短信签名-可在短信控制台中找到
-            //         TemplateCode: aliConfig.TemplateCode,//必填:短信模板-可在短信控制台中找到
-            //         TemplateParam: JSON.stringify(param) //可选:模板中的变量替换JSON串,目前不用
-            //     }).then(function (res) {
-            //         let { Code } = res
-            //         if (Code === 'OK') {
-            //             //处理返回参数
-            //             console.log(res)
-            //         }
-            //     }, function (err) {
-            //         console.log(err)
-            //     })
-            // })
+            device.phone.forEach((item) => {
+                let param = {
+                    code: content.items.CurrentTemperature.value.toString().substr(0,6),
+                };
+                console.log(param)
+                console.log(JSON.stringify(param))
+                smsClient.sendSMS({
+                    PhoneNumbers: item.phone, //必填:待发送手机号,支持以逗号分隔的形式进行批量调用，目前从前端获取手机号码
+                    SignName: aliConfig.SignName,//必填:短信签名-可在短信控制台中找到
+                    TemplateCode: aliConfig.TemplateCode,//必填:短信模板-可在短信控制台中找到
+                    TemplateParam: JSON.stringify(param) //可选:模板中的变量替换JSON串,目前不用
+                }).then(function (res) {
+                    let { Code } = res
+                    if (Code === 'OK') {
+                        //处理返回参数
+                        console.log(res)
+                    }
+                }, function (err) {
+                    console.log(err)
+                })
+            })
         }
         app.get('Record').create({
             deviceId: device._id,

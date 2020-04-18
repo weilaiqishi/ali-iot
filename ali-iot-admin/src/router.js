@@ -5,6 +5,7 @@ import DeviceEdit from './views/DeviceEdit.vue'
 import DeviceList from './views/DeviceList.vue'
 import TheMapEdit from './views/TheMapEdit.vue'
 import TheMapList from './views/TheMapList.vue'
+import TheMapContent from './views/TheMapContent.vue'
 import RecordList from './views/RecordList.vue'
 
 
@@ -17,13 +18,14 @@ const router = new Router({
             name: 'Main',
             component: Main,
             children: [
-                { path: '/device/create',component: DeviceEdit },
-                { path: '/device/edit/:id',component: DeviceEdit,props: true},
-                { path: '/device/list',component: DeviceList },
-                { path: '/theMap/create',component: TheMapEdit },
-                { path: '/theMap/edit/:id',component: TheMapEdit,props: true},
-                { path: '/theMap/list',component: TheMapList },
-                { path: '/record/list',component: RecordList },
+                { path: '/device/create', component: DeviceEdit },
+                { path: '/device/edit/:id', component: DeviceEdit, props: true },
+                { path: '/device/list', component: DeviceList },
+                { path: '/theMap/create', component: TheMapEdit },
+                { path: '/theMap/edit/:id', component: TheMapEdit, props: true },
+                { path: '/theMap/list', component: TheMapList },
+                { path: '/theMap/content/:id', component: TheMapContent, props: true },
+                { path: '/record/list', component: RecordList },
             ]
         },
     ]

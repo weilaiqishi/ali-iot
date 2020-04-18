@@ -195,7 +195,7 @@ export default {
         );
         this.option.xAxis[0].data = twoArr.time;
         this.option.series[0].data = twoArr.temperature;
-        this.myChart.setOption(this.option);
+        this.myChart.setOption && this.myChart.setOption(this.option);
       },
       immediate: true,
       deep: true,

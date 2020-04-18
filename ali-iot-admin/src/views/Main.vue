@@ -87,7 +87,7 @@
 }
 .alarm {
   font-size: 30px;
-  color: rgb(223, 46, 46);
+  color: rgb(255, 29, 29);
 }
 .echartsList {
   position: absolute;
@@ -96,6 +96,7 @@
   bottom: 0px;
   background: rgb(238, 241, 246);
   padding: 0px;
+  z-index: 1000;
 }
 
 /*动画*/

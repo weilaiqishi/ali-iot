@@ -6,18 +6,22 @@ const store = new Vuex.Store({
     state: {
         record: {},
         alarm: {},
-        shouldShow: {}
+        shouldShow: {},
+        map: {
+            mapPoint: {},
+            devicePoint: {},
+        }
     },
     mutations: {
         recordAdd(state, record) {
-            state.record[record.deviceName] = state.record[record.deviceName] || Vue.set(state.record, record.deviceName, {items: []})
+            !state.record[record.deviceName] && Vue.set(state.record, record.deviceName, {items: []});
             if(state.record[record.deviceName].items.length>5){
                 state.record[record.deviceName].items.shift()
             }
-            Vue.set(state.record[record.deviceName], 'items', state.record[record.deviceName].items.concat({
+            Vue.set(state.record[record.deviceName], 'items', state.record[record.deviceName].items.concat([{
                 temperature: record.temperature,
                 time: record.time
-            }))
+            }]))
             if (record.alarm) {
                 state.alarm[record._id] = Vue.set(state.alarm, record._id, record)
             }
@@ -30,6 +34,15 @@ const store = new Vuex.Store({
         },
         shouldShowDelete(state, deviceName) {
             Vue.delete(state.shouldShow, deviceName)
+        },
+        mapMapPointInit(state, mapPointObj) {
+            Vue.set(state.map, 'mapPoint', mapPointObj)
+        },
+        mapMapPointSet(state, mapPoint) {
+            Vue.set(state.map.mapPoint, mapPoint.xy, mapPoint.model)
+        },
+        mapMapPointDelete(state, mapPoint) {
+            Vue.delete(state.map.mapPoint, mapPoint.xy);
         }
     }
 });

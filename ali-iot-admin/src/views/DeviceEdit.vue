@@ -1,5 +1,5 @@
 <template>
-  <div class="about">
+  <div>
     <h1>{{ id ? "编辑" : "新建" }}设备</h1>
     <!--native表示原生表单 prevent表示阻止默认操作，不跳转页面-->
     <el-form label-width="120px" @submit.native.prevent="save">
@@ -61,10 +61,10 @@
         <el-input v-model="model.description" type="textarea"></el-input>
       </el-form-item>
       <el-form-item label="X坐标">
-        <el-input-number v-model="model.coordinateX"></el-input-number>
+        <el-input-number :min="0" v-model="model.coordinateX"></el-input-number>
       </el-form-item>
       <el-form-item label="Y坐标">
-        <el-input-number v-model="model.coordinateY"></el-input-number>
+        <el-input-number :min="0" v-model="model.coordinateY"></el-input-number>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" native-type="submit">保存</el-button>
