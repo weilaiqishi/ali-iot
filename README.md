@@ -6,6 +6,6 @@
   虚拟设备
     阿里云物联网产品定义、设备创建
   业务后端
-    mangodb
+    mongodb
     设备信息json
     ossjson
