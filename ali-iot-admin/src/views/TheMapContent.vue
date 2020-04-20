@@ -96,9 +96,11 @@ export default {
       const res = await this.$http.get(`rest/theMap/${this.id}`);
       this.model = res.data;
       this.$store.commit("mapMapPointInit", JSON.parse(this.model.point) || {});
+      this.$store.commit("mapDevicePointInit", this.model.deviceList || []);
       this.$refs.map.style.background = this.model.image
         ? `url(${this.model.image}) no-repeat`
         : "";
+      this.$message.success('地图请求成功')
     },
   },
   created() {

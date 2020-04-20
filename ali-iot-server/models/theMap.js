@@ -10,7 +10,7 @@ const schema = new mongoose.Schema({
     sizeX: { type: Number },
     sizeY: { type: Number },
     point: { type: String }
-})
+},{ toJSON: { virtuals: true } })
 
 schema.virtual('deviceList',{
     localField: '_id',

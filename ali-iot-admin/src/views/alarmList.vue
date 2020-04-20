@@ -32,7 +32,7 @@
           <el-button type="primary" size="small" @click="toMap(value._id)"
             >看地图</el-button
           >
-          <el-button size="small" @click="$store.commit('alarmDelete', value._id)"
+          <el-button size="small" @click="$store.commit('alarmDelete', {id: value._id, deviceName: value.deviceName})"
             >知道了</el-button
           >
         </el-col>
@@ -49,7 +49,7 @@ export default {
     };
   },
   watch: {
-    "$store.state.alarm": {
+    "$store.getters.alarm": {
       handler(newVal) {
         this.alarm = newVal;
       },

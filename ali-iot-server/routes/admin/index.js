@@ -26,14 +26,12 @@ module.exports = (app) => {
 
   // get一个
   router.get("/:id", async (req, res) => {
+    const queryOptions = {};
     if (req.Model.modelName === "TheMap") {
-      // isn't work
-      const model = await req.Model.findById(req.params.id).populate('deviceList');
-      res.send(model);
-    } else {
-      const model = await req.Model.findById(req.params.id);
-      res.send(model);
+      queryOptions.populate = 'deviceList'
     }
+    const model = await req.Model.findById(req.params.id).setOptions(queryOptions);
+    res.send(model);
   });
 
   // get列表
@@ -71,7 +69,7 @@ module.exports = (app) => {
   // 上传
   const multer = require("multer");
   const MAO = require("multer-aliyun-oss");
-  const ossConfig = require('../../ali-oss.json')
+  const ossConfig = require("../../ali-oss.json");
   const upload = multer({
     storage: MAO({
       config: {
@@ -82,7 +80,7 @@ module.exports = (app) => {
       },
     }),
   });
-  app.post("/admin/api/upload", upload.single('file'), (req, res) => {
+  app.post("/admin/api/upload", upload.single("file"), (req, res) => {
     res.send(req.file);
   });
 };

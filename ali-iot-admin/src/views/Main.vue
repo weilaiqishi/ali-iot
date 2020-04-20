@@ -151,7 +151,7 @@ export default {
     }, 10000),
   },
   watch: {
-    "$store.state.alarm": {
+    "$store.getters.alarm": {
       handler(newVal) {
         let flag = this.alarm;
         this.alarm = !!Object.keys(newVal).length;

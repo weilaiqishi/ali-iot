@@ -3,12 +3,28 @@
     <el-button
       slot="reference"
       class="cell"
-      :class="{ red: this.cell.type === 'ABC' }"
-      >
-      <i :class="icon" class="center" style="font-size: 70px;opacity: 0.5;"></i>
-      <span style="font-size: 16px;font-weight: bold;color: black;">{{ cell.name.substr(0, 5) }}</span>
-      </el-button
+      :class="[{ yellow: !!this.deviceCell.name }, { red: this.alarm }]"
     >
+      <i :class="icon" class="center" style="font-size: 70px;opacity: 0.5;"></i>
+      <span style="font-size: 16px;font-weight: bold;color: black;">{{
+        cell.name.substr(0, 5)
+      }}</span>
+      <el-tooltip
+        effect="dark"
+        :content="deviceCell.name"
+        placement="top-start"
+      >
+        <span
+          style="position: absolute;top: 14px;left: 4px;font-size: 14px;color: black;"
+          >{{ deviceCell.name.substr(0, 10) }}</span
+        >
+      </el-tooltip>
+      <span
+        v-if="deviceCell.name"
+        style="position: absolute;bottom: 8px;right: 24%;font-weight: bold;font-size: 18px;color: black;"
+        >{{ deviceCell.temperature }}℃</span
+      >
+    </el-button>
     <el-form label-width="60px">
       <el-form-item label="地点名">
         <el-input v-model="model.name"></el-input>
@@ -49,6 +65,12 @@ export default {
         coordinateX: this.coordinateX,
         coordinateY: this.coordinateY,
       },
+      deviceCell: {
+        name: "",
+        coordinateX: this.coordinateX,
+        coordinateY: this.coordinateY,
+        temperature: 20,
+      },
       types: [
         {
           name: "出口",
@@ -64,6 +86,7 @@ export default {
         },
       ],
       visible: false,
+      alarm: false
     };
   },
   props: {
@@ -130,6 +153,31 @@ export default {
       immediate: true,
       deep: true,
     },
+    "$store.state.map.devicePoint": {
+      handler(newVal) {
+        this.deviceCell = Object.assign(
+          this.deviceCell,
+          newVal[this.xy] || {
+            name: "",
+            coordinateX: this.coordinateX,
+            coordinateY: this.coordinateY,
+          }
+        );
+      },
+      immediate: true,
+      deep: true,
+    },
+    "$store.state.record": {
+      handler(newVal) {
+        if (!this.deviceCell.name || !newVal[this.deviceCell.name]) return
+        this.deviceCell.temperature = newVal[this.deviceCell.name].items.slice(-1)[0].temperature || 20;
+        this.alarm = !!Object.keys(newVal[this.deviceCell.name].alarm).length;
+
+        
+      },
+      immediate: true,
+      deep: true,
+    },
   },
 };
 </script>
@@ -152,6 +200,9 @@ export default {
   margin-bottom: 6px;
 }
 .red {
-  background: rgb(255, 29, 29);
+  background: rgb(255, 29, 29) !important;
+}
+.yellow {
+  background: rgb(226, 224, 116);
 }
 </style>
