@@ -1,5 +1,6 @@
 <template>
   <div class="echartsList">
+    <h1 style="text-align: center">设备实时探测温度</h1>
     <echart v-for="(value,item) in shouldShow" :id="item" :key="item"></echart>
   </div>
 </template>

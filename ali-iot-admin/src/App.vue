@@ -40,4 +40,22 @@ body {
 .textCenterX {
   text-align: center;
 }
+
+::-webkit-scrollbar {
+  /*滚动条整体样式*/
+  width: 8px; 
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  background: #99a9bf;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px rgba(184, 184, 184, 0.2);
+  border-radius: 10px;
+  background: #ffffff;
+}
 </style>

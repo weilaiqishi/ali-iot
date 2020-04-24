@@ -19,9 +19,14 @@
           </el-tooltip>
         </el-col>
         <el-col :span="20" class="hB">
-          <el-carousel height="100px" :autoplay="false">
+          <el-carousel height="100px" :autoplay="false" trigger="click">
             <el-carousel-item>
               <el-row class="one">
+                <h1
+                  style="position: absolute;top: -15px;left: -20px;width: 14px;font-size: 14px;word-wrap: break-word;"
+                >
+                  地图大小
+                </h1>
                 <el-col :span="12" class="hB textCenterX">
                   sizeX 地图X大小
                   <el-input-number
@@ -38,8 +43,8 @@
                 </el-col>
               </el-row>
             </el-carousel-item>
-            <el-carousel-item>
-              asdg
+            <el-carousel-item style="padding-top: 0px;padding-bottom: 0px">
+              <TheMapPoint :sizeX="model.sizeX" :sizeY="model.sizeY"></TheMapPoint>
             </el-carousel-item>
           </el-carousel>
         </el-col>
@@ -64,7 +69,12 @@
 
 <script>
 import TheMapContentItem from "./TheMapContentItem.vue";
+import TheMapPoint from "./TheMapPoint/TheMapPoint.vue";
 export default {
+  components: {
+    TheMapContentItem,
+    TheMapPoint,
+  },
   props: {
     id: {},
   },
@@ -83,7 +93,9 @@ export default {
   methods: {
     async save() {
       if (this.id) {
-        this.$store.state.map.mapPoint && (this.model.point = JSON.stringify(this.$store.state.map.mapPoint) || "");
+        this.$store.state.map.mapPoint &&
+          (this.model.point =
+            JSON.stringify(this.$store.state.map.mapPoint) || "");
         await this.$http.put(`rest/theMap/${this.id}`, this.model);
         this.$message({
           type: "success",
@@ -95,19 +107,19 @@ export default {
     async fetch() {
       const res = await this.$http.get(`rest/theMap/${this.id}`);
       this.model = res.data;
-      this.$store.commit("mapMapPointInit", JSON.parse(this.model.point) || {});
+      this.$store.commit(
+        "mapMapPointInit",
+        (this.model.point && JSON.parse(this.model.point)) || {}
+      );
       this.$store.commit("mapDevicePointInit", this.model.deviceList || []);
       this.$refs.map.style.background = this.model.image
         ? `url(${this.model.image}) no-repeat`
         : "";
-      this.$message.success('地图请求成功')
+      this.$message.success("地图请求成功");
     },
   },
   created() {
     this.id && this.fetch();
-  },
-  components: {
-    TheMapContentItem,
   },
 };
 </script>

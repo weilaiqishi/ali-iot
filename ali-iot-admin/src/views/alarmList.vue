@@ -1,5 +1,14 @@
 <template>
-  <div style="height: 170px;display: flex;width: 100%;overflow-x: scroll;">
+  <div style="height: 170px;display: flex;width: 100%;padding-left: 10px;overflow-x: scroll;">
+    <h1
+      style="position: absolute;top: -15px;left: 4px;
+        width: 20px;
+        font-size: 20px; 
+        word-wrap: break-word;   
+        letter-spacing: 20px;"
+    >
+      报警记录
+    </h1>
     <el-card
       v-for="(value, item) in alarm"
       :id="item"
@@ -32,7 +41,14 @@
           <el-button type="primary" size="small" @click="toMap(value._id)"
             >看地图</el-button
           >
-          <el-button size="small" @click="$store.commit('alarmDelete', {id: value._id, deviceName: value.deviceName})"
+          <el-button
+            size="small"
+            @click="
+              $store.commit('alarmDelete', {
+                id: value._id,
+                deviceName: value.deviceName,
+              })
+            "
             >知道了</el-button
           >
         </el-col>
@@ -59,10 +75,12 @@ export default {
   },
   methods: {
     async toMap(id) {
-      const res = await this.$http.get(`rest/device/${this.alarm[id].deviceId}`);
-      this.$router.push(`/theMap/content/${res.data.theMapId}`)
-    }
-  }
+      const res = await this.$http.get(
+        `rest/device/${this.alarm[id].deviceId}`
+      );
+      this.$router.push(`/theMap/content/${res.data.theMapId}`);
+    },
+  },
 };
 </script>
 
@@ -71,7 +89,7 @@ export default {
   display: block;
   padding-left: 10px;
 }
-.el-button+.el-button {
-    margin-left: 0px;
+.el-button + .el-button {
+  margin-left: 0px;
 }
 </style>
