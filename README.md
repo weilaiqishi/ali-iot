@@ -9,3 +9,5 @@
     mongodb
     设备信息json
     ossjson
+    
+演示地址 admin http://47.100.116.130:4002/index.html 设备控制 http://47.100.116.130:4002/device.html
