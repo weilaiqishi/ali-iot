@@ -3,7 +3,7 @@
     <el-button
       slot="reference"
       class="cell"
-      :class="[{ yellow: !!this.deviceCell.name }, { red: this.alarm }]"
+      :class="[{ yellow: !!this.deviceCell.name }, { red: this.alarm }, { green: this.green }]"
     >
       <i :class="icon" class="center" style="font-size: 70px;opacity: 0.5;"></i>
       <span style="font-size: 16px;font-weight: bold;color: black;">{{
@@ -26,6 +26,9 @@
       >
     </el-button>
     <el-form label-width="60px">
+      <el-form-item label="坐标">
+        <h5 style="margin: 0;">({{this.coordinateX}} , {{this.coordinateY}})</h5>
+      </el-form-item>
       <el-form-item label="地点名">
         <el-input v-model="model.name"></el-input>
       </el-form-item>
@@ -45,6 +48,16 @@
         >设置</el-button
       >
       <el-button size="mini" @click="mapPointDelete()">移除</el-button>
+    </el-row>
+    <el-row style="margin-top: 6px;">
+      <el-button type="danger" size="mini" @click="emitAddAsAlarmPoint"
+        >模拟火情</el-button
+      >
+    </el-row>
+        <el-row style="margin-top: 6px;">
+      <el-button type="success" size="mini" @click="emitAstar"
+        >从此逃生</el-button
+      >
     </el-row>
   </el-popover>
 </template>
@@ -86,12 +99,14 @@ export default {
         },
       ],
       visible: false,
-      alarm: false
+      recordAlarm: false
     };
   },
   props: {
     coordinateX: Number,
     coordinateY: Number,
+    asAlarmPoint: Object,
+    path: Object
   },
   methods: {
     mapPointAdd() {
@@ -107,6 +122,12 @@ export default {
       });
       this.visible = false;
     },
+    emitAddAsAlarmPoint() {
+      this.$emit('addAsAlarmPoint', this.xy);
+    },
+    emitAstar() {
+      this.$emit('Astar', this.xy);
+    }
   },
   computed: {
     xy: function() {
@@ -115,7 +136,7 @@ export default {
     icon: function() {
       switch (this.cell.type) {
         case "exit":
-          return "el-icon-s-flag";
+          return "el-icon-s-flag exitIconColor";
         case "passage":
           return "el-icon-guide";
         case "room":
@@ -124,6 +145,12 @@ export default {
           return "";
       }
     },
+    alarm: function() {
+      return this.recordAlarm || this.asAlarmPoint[this.xy]
+    },
+    green: function() {
+      return this.path[this.xy]
+    }
   },
   watch: {
     "$store.state.map.mapPoint": {
@@ -171,9 +198,8 @@ export default {
       handler(newVal) {
         if (!this.deviceCell.name || !newVal[this.deviceCell.name]) return
         this.deviceCell.temperature = newVal[this.deviceCell.name].items.slice(-1)[0].temperature || 20;
-        this.alarm = !!Object.keys(newVal[this.deviceCell.name].alarm).length;
-
-        
+        this.recordAlarm = !!Object.keys(newVal[this.deviceCell.name].alarm).length;
+        !!Object.keys(newVal[this.deviceCell.name].alarm).length && this.$emit('addAlarmPoint', this.xy);
       },
       immediate: true,
       deep: true,
@@ -204,5 +230,11 @@ export default {
 }
 .yellow {
   background: rgb(226, 224, 116);
+}
+.green {
+  border: 10px solid #48ff76;
+}
+.exitIconColor {
+  color:#48ff76
 }
 </style>

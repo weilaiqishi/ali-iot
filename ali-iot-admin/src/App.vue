@@ -37,6 +37,11 @@ body {
   left: 50%;
   transform: translateX(-50%);
 }
+.centerY {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
 .textCenterX {
   text-align: center;
 }

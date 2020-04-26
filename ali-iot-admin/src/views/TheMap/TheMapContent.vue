@@ -25,17 +25,27 @@
                 <h1
                   style="position: absolute;top: -15px;left: -20px;width: 14px;font-size: 14px;word-wrap: break-word;"
                 >
+                  逃生路线
+                </h1>
+                <h1 class="center" style="font-size: 20px;top: 10%;">查看逃生路线请地图点击格子</h1>
+              </el-row>
+            </el-carousel-item>
+            <el-carousel-item>
+              <el-row class="one">
+                <h1
+                  style="position: absolute;top: -15px;left: -20px;width: 14px;font-size: 14px;word-wrap: break-word;"
+                >
                   地图大小
                 </h1>
                 <el-col :span="12" class="hB textCenterX">
-                  sizeX 地图X大小
+                  <el-row>sizeX 地图X大小</el-row>
                   <el-input-number
                     :min="0"
                     v-model="model.sizeX"
                   ></el-input-number>
                 </el-col>
                 <el-col :span="12" class="hB textCenterX">
-                  sizeY 地图Y大小
+                  <el-row>sizeY 地图Y大小</el-row>
                   <el-input-number
                     :min="0"
                     v-model="model.sizeY"
@@ -44,7 +54,16 @@
               </el-row>
             </el-carousel-item>
             <el-carousel-item style="padding-top: 0px;padding-bottom: 0px">
-              <TheMapPoint :sizeX="model.sizeX" :sizeY="model.sizeY"></TheMapPoint>
+              <TheMapPoint
+                :sizeX="model.sizeX"
+                :sizeY="model.sizeY"
+              ></TheMapPoint>
+            </el-carousel-item>
+            <el-carousel-item style="padding-top: 0px;padding-bottom: 0px">
+              <TheMapPathHinder
+                :asAlarmPoint="asAlarmPoint"
+                @deleteAsAlarmPoint="deleteAsAlarmPoint"
+              ></TheMapPathHinder>
             </el-carousel-item>
           </el-carousel>
         </el-col>
@@ -59,6 +78,11 @@
               :key="x"
               :coordinateX="x"
               :coordinateY="y"
+              @addAsAlarmPoint="addAsAlarmPoint"
+              @addAlarmPoint="addAlarmPoint"
+              :asAlarmPoint="asAlarmPoint"
+              @Astar="astar"
+              :path="path"
             ></TheMapContentItem>
           </div>
         </div>
@@ -70,10 +94,12 @@
 <script>
 import TheMapContentItem from "./TheMapContentItem.vue";
 import TheMapPoint from "./TheMapPoint/TheMapPoint.vue";
+import TheMapPathHinder from "./TheMapPathHinder/TheMapPathHinder.vue";
 export default {
   components: {
     TheMapContentItem,
     TheMapPoint,
+    TheMapPathHinder
   },
   props: {
     id: {},
@@ -88,6 +114,9 @@ export default {
         sizeY: 0,
         point: "",
       },
+      asAlarmPoint: {},
+      alarmPoint: {},
+      path: {}
     };
   },
   methods: {
@@ -116,6 +145,71 @@ export default {
         ? `url(${this.model.image}) no-repeat`
         : "";
       this.$message.success("地图请求成功");
+    },
+    addAsAlarmPoint(xy) {
+      this.$set(this.asAlarmPoint, xy, true);
+    },
+    deleteAsAlarmPoint(xy) {
+      this.$delete(this.asAlarmPoint, xy);
+    },
+    addAlarmPoint(xy) {
+      this.$set(this.alarmPoint, xy, true);
+    },
+    astar(xy) {
+      this.path = {};
+      const map = this.$astar.mapInit(this.model.sizeX, this.model.sizeY);
+      // 建筑物和逃生点
+      const mapPoint = this.$store.state.map.mapPoint;
+      let exitList = [];
+      for (let i in mapPoint) {
+        if (
+          mapPoint[i].coordinateX <= this.model.sizeX &&
+          mapPoint[i].coordinateY <= this.model.sizeY
+        ) {
+          map.data[mapPoint[i].coordinateX - 1][
+            mapPoint[i].coordinateY - 1
+          ] = 1;
+        }
+        mapPoint[i].type === 'exit' && exitList.push(mapPoint[i])
+      }
+      function parsexy(xy){
+        const yIndex = xy.indexOf('y')
+        return {
+          coordinateX: Number(xy.substr(1, yIndex - 1)),
+          coordinateY: Number(xy.substr(yIndex + 1))
+        }
+      }
+      // 真火情 地图中该点设置为不能行走
+      for (let i in this.alarmPoint) {
+        const xy = parsexy(i);
+        if (
+          xy.coordinateX <= this.model.sizeX &&
+          xy.coordinateY <= this.model.sizeY
+        ) {
+          map.data[xy.coordinateX - 1][
+            xy.coordinateY - 1
+          ] = 0;
+        }
+      }
+      // 模拟火情 地图中该点设置为不能行走
+      for (let i in this.asAlarmPoint) {
+        const xy = parsexy(i);
+        if (
+          xy.coordinateX <= this.model.sizeX &&
+          xy.coordinateY <= this.model.sizeY
+        ) {
+          map.data[xy.coordinateX - 1][
+            xy.coordinateY - 1
+          ] = 0;
+        }
+      }
+      // 出口的点作为寻路的end
+      for (let i of exitList) {
+        let point = this.$astar.AStar(map,this.$astar.Point(parsexy(xy).coordinateX - 1,parsexy(xy).coordinateY - 1),this.$astar.Point(i.coordinateX - 1,i.coordinateY - 1)).start();
+        point.forEach((i) => {
+          this.$set(this.path, `x${i.x + 1}y${i.y + 1}`, true)
+        })
+      }
     },
   },
   created() {
